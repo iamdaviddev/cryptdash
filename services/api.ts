@@ -66,3 +66,23 @@ export async function getMarketChart(coinId: string = 'bitcoin', days: string = 
     price: item[1],
   }));
 }
+
+export async function getTopCoins(limit: number = 10) {
+  const res = await fetch(
+    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${limit}&page=1&sparkline=false`,
+    { next: { revalidate: 60 } } 
+  );
+
+  if (!res.ok) throw new Error('Falha ao buscar top coins');
+
+  return res.json();
+}
+
+export async function getCoinList(limit: number = 20) {
+  const res = await fetch(
+    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${limit}&page=1&sparkline=false`,
+    { next: { revalidate: 60 } }
+  );
+  if (!res.ok) throw new Error('Erro ao buscar moedas');
+  return res.json();
+}

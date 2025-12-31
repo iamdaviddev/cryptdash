@@ -1,40 +1,47 @@
-'use client';
-import { api } from '@/services/api';
-import { CryptoCoin } from '@/types/coincap';
-import { useEffect, useState } from 'react';
+interface Coin {
+  id: string;
+  symbol: string;
+  name: string;
+  image: string;
+}
 
+interface CoinSidebarListProps {
+  coins: Coin[];
+}
 
-export default function CryptoList() {
-  const [coins, setCoins] = useState<CryptoCoin[]>([]);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const response = await api.get('/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1');
-        const transformedCoins = response.data.map((coin: any) => ({
-          id: coin.id,
-          rank: coin.market_cap_rank.toString(),
-          symbol: coin.symbol,
-          name: coin.name,
-          priceUsd: coin.current_price.toString(),
-          changePercent24Hr: coin.price_change_percentage_24h.toString(),
-        }));
-        setCoins(transformedCoins);
-      } catch (error) {
-        console.error("Erro ao carregar dados:", error);
-      }
-    };
-
-    loadData();
-  }, []);
-
+export function CryptoList({ coins }: CoinSidebarListProps) {
   return (
-    <div className="p-8">
-      {coins.map(coin => (
-        <div key={coin.id} className="p-2 border-b border-slate-700">
-           {coin.name} - ${parseFloat(coin.priceUsd).toFixed(2)}
-        </div>
-      ))}
+    <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-xl flex flex-col gap-3">
+      <h3 className="text-sm font-semibold text-slate-400 mb-2">Trending Assets</h3>
+      
+      <div className="grid grid-cols-1 gap-3">
+        {coins.map((coin) => (
+          <div 
+            key={coin.id} 
+            className="flex items-center justify-between gap-3 text-sm p-2 bg-slate-800/40 border border-slate-700/50 rounded-lg hover:bg-slate-800/80 transition-colors cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <img 
+                src={coin.image} 
+                alt={coin.name} 
+                className="w-5 h-5 rounded-full" 
+              />
+              <span className="font-medium text-slate-200">
+                {coin.name} 
+                <span className="text-[10px] text-slate-500 ml-2 uppercase font-mono">
+                  {coin.symbol}
+                </span>
+              </span>
+            </div>
+            
+            <span className="text-slate-600 text-[10px]">›</span>
+          </div>
+        ))}
+      </div>
+
+      <button className="mt-2 text-xs text-blue-400 hover:underline self-start">
+        Ver todas as 20 moedas ›
+      </button>
     </div>
   );
 }
