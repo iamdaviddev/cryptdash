@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Area, AreaChart, ResponsiveContainer, Tooltip } from 'recharts';
 
 export function MarketChart() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<{ time: string; price: number }[]>([]);
   const [days, setDays] = useState('1'); // '1' = 24h, '7' = 1w, '30' = 1m
   const [loading, setLoading] = useState(true);
 
