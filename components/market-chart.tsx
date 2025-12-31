@@ -25,7 +25,7 @@ export function MarketChart() {
   }, [days]);
 
   return (
-    <div className="bg-white border border-slate-800 p-6 rounded-xl">
+    <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-xl">
       <div className="flex justify-between items-center mb-6">
         <h2 className="font-semibold text-white">Market Overview (BTC)</h2>
         <div className="flex gap-4 text-xs font-medium text-slate-400">
