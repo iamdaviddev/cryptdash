@@ -10,8 +10,16 @@ export default function CryptoList() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const response = await api.get('/assets');
-        setCoins(response.data.data);
+        const response = await api.get('/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1');
+        const transformedCoins = response.data.map((coin: any) => ({
+          id: coin.id,
+          rank: coin.market_cap_rank.toString(),
+          symbol: coin.symbol,
+          name: coin.name,
+          priceUsd: coin.current_price.toString(),
+          changePercent24Hr: coin.price_change_percentage_24h.toString(),
+        }));
+        setCoins(transformedCoins);
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
       }

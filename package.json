@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ant-design/icons": "^6.1.0",
     "axios": "^1.13.2",
     "chart.js": "^4.5.1",
     "lucide-react": "^0.562.0",

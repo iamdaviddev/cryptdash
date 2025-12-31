@@ -1,39 +1,48 @@
+import { Card } from "@/components/card";
+import { getBtcEthData, getGlobalData } from "@/services/api";
+
 
 export default async function Home() {
+  const globalData = await getGlobalData();
+  const btcEthData = await getBtcEthData();
+
+  const formatCurrency = (value: string) => {
+    const num = parseFloat(value);
+    if (num >= 1e12) return `$${(num / 1e12).toFixed(2)}T`;
+    if (num >= 1e9) return `$${(num / 1e9).toFixed(2)}B`;
+    return `$${num.toLocaleString()}`;
+  };
  
   return (
     <div className="min-h-screen text-gray-50">
 
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
         <section className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-blue-900/40 border border-blue-800 p-5 rounded-xl">
-            <p className="text-xs text-blue-200 mb-2">Global Market Cap</p>
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold">$1.76T</span>
-              <span className="text-green-400 text-xs">▲ 2.4%</span>
-            </div>
-          </div>
-          <div className="bg-purple-900/40 border border-purple-800 p-5 rounded-xl">
-            <p className="text-xs text-purple-200 mb-2">24h Volume</p>
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold">$98.5B</span>
-              <span className="text-red-400 text-xs">▼ 3.1%</span>
-            </div>
-          </div>
-          <div className="bg-orange-900/40 border border-orange-800 p-5 rounded-xl">
-            <p className="text-xs text-orange-200 mb-2">BTC Dominance</p>
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold">44.8%</span>
-              <span className="text-green-400 text-xs">▲ 0.5%</span>
-            </div>
-          </div>
-          <div className="bg-emerald-900/40 border border-emerald-800 p-5 rounded-xl">
-            <p className="text-xs text-emerald-200 mb-2">ETH Dominance</p>
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold">18.3%</span>
-              <span className="text-red-400 text-xs">▼ 0.2%</span>
-            </div>
-          </div>
+          
+          <Card 
+            title="Global Market Cap" 
+            amount={formatCurrency(globalData.totalMarketCapUsd)} 
+            percent={globalData.marketCapChangePercent24Hr}
+          />
+
+          <Card 
+            title="24h Volume" 
+            amount={formatCurrency(globalData.volumeUsd24Hr)} 
+            percent={globalData.volumeChangePercent24Hr}
+          />
+
+          <Card 
+            title="BTC Dominance" 
+            amount={parseFloat(globalData.btcDominance).toFixed(2) + '%'} 
+            percent={btcEthData[0].price_change_percentage_24h}
+          />
+
+          <Card 
+            title="ETH Dominance" 
+            amount={parseFloat(globalData.ethDominance).toFixed(2) + '%'} 
+            percent={btcEthData[1].price_change_percentage_24h}
+          />
+                    
         </section>
 
       <div className="lg:col-span-2 space-y-6">
