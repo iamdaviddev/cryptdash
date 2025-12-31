@@ -7,12 +7,52 @@ import { getBtcEthData, getCoinList, getCryptoNews, getGlobalData, getTopCoins }
 
 
 export default async function Home() {
-  const globalData = await getGlobalData();
-  const btcEthData = await getBtcEthData();
-  const newsData = await getCryptoNews();
+  let globalData, btcEthData, newsData, coins, coinsList;
 
-  const coins = await getTopCoins(5);
-  const coinsList = await getCoinList(10);
+  try {
+    globalData = await getGlobalData();
+  } catch (error) {
+    console.error('Erro ao buscar dados globais:', error);
+    globalData = {
+      totalMarketCapUsd: '0',
+      marketCapChangePercent24Hr: '0',
+      volumeUsd24Hr: '0',
+      volumeChangePercent24Hr: '0',
+      btcDominance: '0',
+      ethDominance: '0',
+    };
+  }
+
+  try {
+    btcEthData = await getBtcEthData();
+  } catch (error) {
+    console.error('Erro ao buscar dados BTC/ETH:', error);
+    btcEthData = [
+      { price_change_percentage_24h: 0 },
+      { price_change_percentage_24h: 0 },
+    ];
+  }
+
+  try {
+    newsData = await getCryptoNews();
+  } catch (error) {
+    console.error('Erro ao buscar notícias:', error);
+    newsData = [];
+  }
+
+  try {
+    coins = await getTopCoins(5);
+  } catch (error) {
+    console.error('Erro ao buscar top coins:', error);
+    coins = [];
+  }
+
+  try {
+    coinsList = await getCoinList(10);
+  } catch (error) {
+    console.error('Erro ao buscar lista de coins:', error);
+    coinsList = [];
+  }
 
   const formatCurrency = (value: string) => {
     const num = parseFloat(value);
@@ -42,13 +82,13 @@ export default async function Home() {
           <Card 
             title="BTC Dominance" 
             amount={parseFloat(globalData.btcDominance).toFixed(2) + '%'} 
-            percent={btcEthData[0].price_change_percentage_24h}
+            percent={btcEthData?.[0]?.price_change_percentage_24h ?? 0}
           />
 
           <Card 
             title="ETH Dominance" 
             amount={parseFloat(globalData.ethDominance).toFixed(2) + '%'} 
-            percent={btcEthData[1].price_change_percentage_24h}
+            percent={btcEthData?.[1]?.price_change_percentage_24h ?? 0}
           />
                     
         </section>
