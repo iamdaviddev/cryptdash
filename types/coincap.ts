@@ -6,6 +6,7 @@ export interface CryptoCoin {
   priceUsd: string;
   changePercent24Hr: string;
 }
+
 export interface Exchange {
   name: string,
   rank: string,

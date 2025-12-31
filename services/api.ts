@@ -18,12 +18,11 @@ export async function getGlobalData() {
   const json = await res.json();
   const data = json.data;
   
-  // Transform CoinGecko data to match expected structure
   return {
     totalMarketCapUsd: data.total_market_cap.usd.toString(),
     marketCapChangePercent24Hr: data.market_cap_change_percentage_24h_usd.toString(),
     volumeUsd24Hr: data.total_volume.usd.toString(),
-    volumeChangePercent24Hr: '0', // Not available in CoinGecko global
+    volumeChangePercent24Hr: '0',
     btcDominance: data.market_cap_percentage.btc.toString(),
     ethDominance: data.market_cap_percentage.eth.toString(),
   };
@@ -38,4 +37,32 @@ export async function getBtcEthData() {
   
   const json = await res.json();
   return json;
+}
+
+export async function getCryptoNews() {
+
+  const res = await fetch('https://cryptopanic.com/api/v2/posts/?auth_token=e5953284efbb71c07eee5c3813784dd364dc2dbd&public=true', {
+    next: { revalidate: 300 }
+  });
+
+  if (!res.ok) return [];
+
+  const json = await res.json();
+  return json.results;
+}
+
+export async function getMarketChart(coinId: string = 'bitcoin', days: string = '1') {
+  const res = await fetch(
+    `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=${days}`,
+    { next: { revalidate: 300 } }
+  );
+
+  if (!res.ok) throw new Error('Falha ao buscar dados do gráfico');
+
+  const data = await res.json();
+  
+  return data.prices.map((item: [number, number]) => ({
+    time: new Date(item[0]).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    price: item[1],
+  }));
 }
